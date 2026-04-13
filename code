@@ -119,3 +119,37 @@ plt.title("线路搭乘站点分析")
 
 plt.savefig("route_stops.png", dpi=150)
 plt.show()
+
+# =========================
+# 任务4：PHF（核心难点）
+# =========================
+
+hour_counts = df_on['hour'].value_counts()
+peak_hour = hour_counts.idxmax()
+peak_count = hour_counts.max()
+
+print(f"高峰小时：{peak_hour}:00~{peak_hour+1}:00，刷卡量：{peak_count}")
+
+peak_df = df_on[df_on['hour'] == peak_hour].copy()
+peak_df.set_index('交易时间', inplace=True)
+
+# 5分钟
+count_5 = peak_df.resample('5min').size()
+max_5 = count_5.max()
+max_5_time = count_5.idxmax()
+
+PHF5 = peak_count / (12 * max_5)
+
+# 15分钟
+count_15 = peak_df.resample('15min').size()
+max_15 = count_15.max()
+max_15_time = count_15.idxmax()
+
+PHF15 = peak_count / (4 * max_15)
+
+print(f"最大5分钟刷卡量（{max_5_time}）：{max_5}")
+print(f"PHF5 = {peak_count} / (12 × {max_5}) = {PHF5:.4f}")
+
+print(f"最大15分钟刷卡量（{max_15_time}）：{max_15}")
+print(f"PHF15 = {peak_count} / (4 × {max_15}) = {PHF15:.4f}")
+
