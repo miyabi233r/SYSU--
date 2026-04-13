@@ -47,3 +47,41 @@ print(df.isnull().sum())
 # 删除缺失
 df = df.dropna()
 
+# =========================
+# 任务2：时间分布（numpy）
+# =========================
+
+df_on = df[df['刷卡类型'] == 0]
+
+hours = df_on['hour'].values
+
+early = np.sum(hours < 7)
+late = np.sum(hours >= 22)
+total = len(hours)
+
+print("早峰前:", early, "占比:", early/total)
+print("深夜:", late, "占比:", late/total)
+
+# 统计
+hour_counts = df_on['hour'].value_counts().sort_index()
+
+plt.figure(figsize=(10,6))
+
+counts = hour_counts.reindex(range(24), fill_value=0)
+
+colors = ['blue'] * 24
+for i in range(24):
+    if i < 7 or i >= 22:
+        colors[i] = 'red'
+
+plt.bar(range(24), counts, color=colors)
+
+plt.xticks(range(0,24,2))
+plt.xlabel("小时")
+plt.ylabel("刷卡量")
+plt.title("24小时刷卡量分布")
+plt.grid(axis='y')
+
+plt.savefig("hour_distribution.png", dpi=150)
+plt.show()
+
