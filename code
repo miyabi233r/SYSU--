@@ -9,3 +9,41 @@ import seaborn as sns
 # =========================
 plt.rcParams['font.sans-serif'] = ['SimHei']
 plt.rcParams['axes.unicode_minus'] = False
+
+# =========================
+# 任务1：数据预处理（已修复CSV问题）
+# =========================
+
+# ⭐ 自动识别分隔符（关键修复）
+df = pd.read_csv('ICData.csv', sep=None, engine='python')
+
+# 去掉列名可能的空格
+df.columns = df.columns.str.strip()
+
+print(df.head())
+print(df.info())
+
+# 时间解析（加容错）
+df['交易时间'] = pd.to_datetime(df['交易时间'], errors='coerce')
+
+# 删除解析失败
+df = df.dropna(subset=['交易时间'])
+
+# 提取小时
+df['hour'] = df['交易时间'].dt.hour
+
+# 构造搭乘站点数
+df['ride_stops'] = (df['下车站点'] - df['上车站点']).abs()
+
+# 删除异常
+before = len(df)
+df = df[df['ride_stops'] != 0]
+after = len(df)
+print(f"删除异常数据：{before - after} 行")
+
+# 缺失值检查
+print(df.isnull().sum())
+
+# 删除缺失
+df = df.dropna()
+
