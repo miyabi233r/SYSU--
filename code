@@ -85,3 +85,37 @@ plt.grid(axis='y')
 plt.savefig("hour_distribution.png", dpi=150)
 plt.show()
 
+
+# =========================
+# 任务3：线路分析
+# =========================
+
+def analyze_route_stops(df, route_col='线路号', stops_col='ride_stops'):
+    """
+    计算各线路乘客的平均搭乘站点数及其标准差。
+    """
+    result = df.groupby(route_col)[stops_col].agg(['mean', 'std']).reset_index()
+    result.columns = [route_col, 'mean_stops', 'std_stops']
+    return result.sort_values(by='mean_stops', ascending=False)
+
+route_df = analyze_route_stops(df)
+print(route_df.head(10))
+
+top15 = route_df.head(15)
+
+plt.figure(figsize=(10,6))
+sns.barplot(
+    data=top15,
+    x='mean_stops',
+    y='线路号',
+    palette='Blues_d',
+    errorbar=('sd'),
+    capsize=0.3
+)
+
+plt.xlabel("平均站点数")
+plt.ylabel("线路号")
+plt.title("线路搭乘站点分析")
+
+plt.savefig("route_stops.png", dpi=150)
+plt.show()
