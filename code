@@ -177,3 +177,36 @@ for route in range(1101, 1121):
 
     print("已生成:", path)
 
+
+# =========================
+# 任务6：热力图
+# =========================
+
+driver_top = df['驾驶员编号'].value_counts().head(10)
+route_top = df['线路号'].value_counts().head(10)
+stop_top = df['上车站点'].value_counts().head(10)
+bus_top = df['车辆编号'].value_counts().head(10)
+
+data = np.array([
+    driver_top.values,
+    route_top.values,
+    stop_top.values,
+    bus_top.values
+])
+
+plt.figure(figsize=(12,6))
+
+sns.heatmap(
+    data,
+    annot=True,
+    cmap="YlOrRd",
+    xticklabels=[f"Top{i}" for i in range(1,11)],
+    yticklabels=["司机","线路","站点","车辆"]
+)
+
+plt.title("服务绩效热力图")
+
+plt.savefig("performance_heatmap.png", dpi=150, bbox_inches='tight')
+plt.show()
+
+print("结论：从热力图可以观察到部分线路和司机的服务人次明显高于其他，说明客流具有集中性，城市出行需求存在明显高峰和热点线路。")
