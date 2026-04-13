@@ -153,3 +153,27 @@ print(f"PHF5 = {peak_count} / (12 × {max_5}) = {PHF5:.4f}")
 print(f"最大15分钟刷卡量（{max_15_time}）：{max_15}")
 print(f"PHF15 = {peak_count} / (4 × {max_15}) = {PHF15:.4f}")
 
+
+# =========================
+# 任务5：导出文件
+# =========================
+
+folder = "线路驾驶员信息"
+os.makedirs(folder, exist_ok=True)
+
+df_range = df[(df['线路号'] >= 1101) & (df['线路号'] <= 1120)]
+
+for route in range(1101, 1121):
+    sub = df_range[df_range['线路号'] == route]
+    pairs = sub[['车辆编号','驾驶员编号']].drop_duplicates()
+
+    path = os.path.join(folder, f"{route}.txt")
+
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(f"线路号: {route}\n")
+        f.write("车辆编号\t驾驶员编号\n")
+        for _, row in pairs.iterrows():
+            f.write(f"{row['车辆编号']}\t{row['驾驶员编号']}\n")
+
+    print("已生成:", path)
+
